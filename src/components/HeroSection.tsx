@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
@@ -14,9 +15,11 @@ const HeroSection = () => {
           <p className="text-lg md:text-xl font-light text-white/70 max-w-xl mx-auto mb-8">
             Giftafy uses advanced AI to recommend personalized gifts for your loved ones. Say goodbye to gift-giving stress forever.
           </p>
-          <Button className="neomorphic-button text-lg">
-            Get Started
-          </Button>
+          <Link to="/gift-finder">
+            <Button className="neomorphic-button text-lg">
+              Get Started
+            </Button>
+          </Link>
         </div>
 
         <div className="mt-16 md:mt-24 animate-fade-in">

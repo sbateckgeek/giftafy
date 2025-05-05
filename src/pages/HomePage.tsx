@@ -12,6 +12,7 @@ import FaqSection from '@/components/FaqSection';
 import CtaSection from '@/components/CtaSection';
 import Footer from '@/components/Footer';
 import ScrollAnimationWrapper from '@/components/ScrollAnimationWrapper';
+import { Link } from 'react-router-dom';
 
 const HomePage = () => {
   return (
