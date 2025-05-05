@@ -3,7 +3,7 @@ import { GiftResult } from "@/types/giftFinder";
 // This would normally be stored in environment variables
 // For demo purposes we're keeping it here, but in a production app
 // this would be stored on a backend server
-const ETSY_API_KEY = "YOUR_ETSY_API_KEY"; // Replace with your actual API key
+const ETSY_API_KEY = "ybscq5vw520vsy28i5fvohgz"; // Replace with your actual API key
 const ETSY_API_BASE_URL = "https://openapi.etsy.com/v3";
 
 // Interface for the Etsy API response
