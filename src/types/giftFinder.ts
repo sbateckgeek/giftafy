@@ -30,3 +30,9 @@ export interface GiftResult {
   isTrending: boolean;
   sales: number;
 }
+
+// API Configuration
+export interface EtsyAPIConfig {
+  apiKey: string;
+  apiBase: string;
+}
