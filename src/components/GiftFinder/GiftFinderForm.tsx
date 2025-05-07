@@ -68,23 +68,16 @@ const GiftFinderForm = ({
                     >
                       {["Friend", "Family Member", "Partner", "Colleague", "Child", "Other"].map((relationship) => (
                         <div key={relationship} 
+                          onClick={() => field.onChange(relationship)} 
                           className={cn(
                             "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
                             field.value === relationship ? "border-primary text-primary" : "text-white/70"
                           )}
                         >
                           <FormControl>
-                            <RadioGroupItem 
-                              value={relationship} 
-                              className="sr-only" 
-                              id={`relationship-${relationship}`}
-                            />
+                            <RadioGroupItem value={relationship} className="sr-only" />
                           </FormControl>
-                          <FormLabel 
-                            className="cursor-pointer w-full flex justify-center items-center m-0"
-                            htmlFor={`relationship-${relationship}`}
-                            onClick={() => field.onChange(relationship)}
-                          >
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {relationship}
                           </FormLabel>
                         </div>
@@ -110,23 +103,16 @@ const GiftFinderForm = ({
                     >
                       {["Under 18", "18-25", "26-35", "36-45", "46-60", "60+"].map((ageRange) => (
                         <div key={ageRange}
+                          onClick={() => field.onChange(ageRange)}
                           className={cn(
                             "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
                             field.value === ageRange ? "border-primary text-primary" : "text-white/70"
                           )}
                         >
                           <FormControl>
-                            <RadioGroupItem 
-                              value={ageRange} 
-                              className="sr-only"
-                              id={`age-${ageRange}`}
-                            />
+                            <RadioGroupItem value={ageRange} className="sr-only" />
                           </FormControl>
-                          <FormLabel 
-                            className="cursor-pointer w-full flex justify-center items-center m-0"
-                            htmlFor={`age-${ageRange}`}
-                            onClick={() => field.onChange(ageRange)}
-                          >
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {ageRange}
                           </FormLabel>
                         </div>
@@ -157,23 +143,16 @@ const GiftFinderForm = ({
                     >
                       {["Birthday", "Anniversary", "Wedding", "Christmas", "Graduation", "Just Because", "Other"].map((occasion) => (
                         <div key={occasion}
+                          onClick={() => field.onChange(occasion)}
                           className={cn(
                             "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
                             field.value === occasion ? "border-primary text-primary" : "text-white/70"
                           )}
                         >
                           <FormControl>
-                            <RadioGroupItem 
-                              value={occasion} 
-                              className="sr-only"
-                              id={`occasion-${occasion}`}
-                            />
+                            <RadioGroupItem value={occasion} className="sr-only" />
                           </FormControl>
-                          <FormLabel 
-                            className="cursor-pointer w-full flex justify-center items-center m-0"
-                            htmlFor={`occasion-${occasion}`}
-                            onClick={() => field.onChange(occasion)}
-                          >
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {occasion}
                           </FormLabel>
                         </div>
@@ -222,23 +201,16 @@ const GiftFinderForm = ({
                     >
                       {["Under $25", "$25-$50", "$50-$100", "$100-$250", "$250-$500", "$500+"].map((budget) => (
                         <div key={budget}
+                          onClick={() => field.onChange(budget)}
                           className={cn(
                             "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
                             field.value === budget ? "border-primary text-primary" : "text-white/70"
                           )}
                         >
                           <FormControl>
-                            <RadioGroupItem 
-                              value={budget} 
-                              className="sr-only"
-                              id={`budget-${budget}`}
-                            />
+                            <RadioGroupItem value={budget} className="sr-only" />
                           </FormControl>
-                          <FormLabel 
-                            className="cursor-pointer w-full flex justify-center items-center m-0"
-                            htmlFor={`budget-${budget}`}
-                            onClick={() => field.onChange(budget)}
-                          >
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {budget}
                           </FormLabel>
                         </div>
@@ -299,18 +271,18 @@ const GiftFinderForm = ({
               variant="outline"
               onClick={goToPrevStep}
               disabled={currentStep === 0 || isSubmitting}
-              className="border-white/20 text-white/70 hover:bg-white/5 text-center w-28"
+              className="border-white/20 text-white/70 hover:bg-white/5"
             >
               Back
             </Button>
             
             <Button 
               type="submit"
-              className="neomorphic-button text-center w-28"
+              className="neomorphic-button"
               disabled={isSubmitting}
             >
               {currentStep === FormStep.BUDGET ? (
-                isSubmitting ? "Finding..." : "Find Gifts"
+                isSubmitting ? "Finding Perfect Gifts..." : "Find Gifts"
               ) : (
                 "Continue"
               )}

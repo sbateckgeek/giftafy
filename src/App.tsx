@@ -1,12 +1,7 @@
 
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
-import { 
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger 
-} from "@/components/ui/tooltip";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from "./pages/HomePage";
@@ -21,10 +16,10 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
+    <TooltipProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
@@ -34,8 +29,8 @@ const App = () => (
           <Route path="/gift-finder" element={<GiftFinderPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </TooltipProvider>
-    </BrowserRouter>
+      </BrowserRouter>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 
