@@ -15,7 +15,10 @@ const HeroSection = () => {
   useEffect(() => {
     // Simple device capability check
     const isMobile = window.innerWidth < 768;
-    const hasLowMemory = navigator.deviceMemory && navigator.deviceMemory < 4;
+    // Use optional chaining to avoid TypeScript errors
+    const hasLowMemory = 'deviceMemory' in navigator && 
+      // @ts-ignore - TypeScript doesn't recognize deviceMemory but it exists in some browsers
+      (navigator as any).deviceMemory < 4;
     
     if (isMobile && hasLowMemory) {
       setShouldLoad3D(false);
