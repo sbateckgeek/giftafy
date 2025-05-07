@@ -67,17 +67,20 @@ const GiftFinderForm = ({
                       className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
                     >
                       {["Friend", "Family Member", "Partner", "Colleague", "Child", "Other"].map((relationship) => (
-                        <FormItem key={relationship} className="glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50">
+                        <div key={relationship} 
+                          onClick={() => field.onChange(relationship)} 
+                          className={cn(
+                            "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
+                            field.value === relationship ? "border-primary text-primary" : "text-white/70"
+                          )}
+                        >
                           <FormControl>
                             <RadioGroupItem value={relationship} className="sr-only" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-center flex items-center justify-center h-full cursor-pointer transition-colors",
-                            field.value === relationship ? "text-primary" : "text-white/70"
-                          )}>
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {relationship}
                           </FormLabel>
-                        </FormItem>
+                        </div>
                       ))}
                     </RadioGroup>
                   </FormControl>
@@ -99,17 +102,20 @@ const GiftFinderForm = ({
                       className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
                     >
                       {["Under 18", "18-25", "26-35", "36-45", "46-60", "60+"].map((ageRange) => (
-                        <FormItem key={ageRange} className="glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50">
+                        <div key={ageRange}
+                          onClick={() => field.onChange(ageRange)}
+                          className={cn(
+                            "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
+                            field.value === ageRange ? "border-primary text-primary" : "text-white/70"
+                          )}
+                        >
                           <FormControl>
                             <RadioGroupItem value={ageRange} className="sr-only" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-center flex items-center justify-center h-full cursor-pointer transition-colors",
-                            field.value === ageRange ? "text-primary" : "text-white/70"
-                          )}>
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {ageRange}
                           </FormLabel>
-                        </FormItem>
+                        </div>
                       ))}
                     </RadioGroup>
                   </FormControl>
@@ -136,17 +142,20 @@ const GiftFinderForm = ({
                       className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
                     >
                       {["Birthday", "Anniversary", "Wedding", "Christmas", "Graduation", "Just Because", "Other"].map((occasion) => (
-                        <FormItem key={occasion} className="glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50">
+                        <div key={occasion}
+                          onClick={() => field.onChange(occasion)}
+                          className={cn(
+                            "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
+                            field.value === occasion ? "border-primary text-primary" : "text-white/70"
+                          )}
+                        >
                           <FormControl>
                             <RadioGroupItem value={occasion} className="sr-only" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-center flex items-center justify-center h-full cursor-pointer transition-colors",
-                            field.value === occasion ? "text-primary" : "text-white/70"
-                          )}>
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {occasion}
                           </FormLabel>
-                        </FormItem>
+                        </div>
                       ))}
                     </RadioGroup>
                   </FormControl>
@@ -191,17 +200,20 @@ const GiftFinderForm = ({
                       className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2"
                     >
                       {["Under $25", "$25-$50", "$50-$100", "$100-$250", "$250-$500", "$500+"].map((budget) => (
-                        <FormItem key={budget} className="glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50">
+                        <div key={budget}
+                          onClick={() => field.onChange(budget)}
+                          className={cn(
+                            "glass-card border border-white/10 rounded-lg p-4 cursor-pointer transition-all hover:border-primary/50 text-center",
+                            field.value === budget ? "border-primary text-primary" : "text-white/70"
+                          )}
+                        >
                           <FormControl>
                             <RadioGroupItem value={budget} className="sr-only" />
                           </FormControl>
-                          <FormLabel className={cn(
-                            "text-center flex items-center justify-center h-full cursor-pointer transition-colors",
-                            field.value === budget ? "text-primary" : "text-white/70"
-                          )}>
+                          <FormLabel className="cursor-pointer w-full flex justify-center items-center">
                             {budget}
                           </FormLabel>
-                        </FormItem>
+                        </div>
                       ))}
                     </RadioGroup>
                   </FormControl>

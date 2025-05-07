@@ -1,3 +1,4 @@
+
 import { GiftResult } from "@/types/giftFinder";
 
 // This would normally be stored in environment variables
@@ -72,48 +73,23 @@ const mapEtsyListingToGiftResult = (listing: EtsyListing, matchScore: number): G
 
 /**
  * Search Etsy for gifts based on the form data
+ * Note: Due to CORS restrictions when using the Etsy API directly from the browser,
+ * we're using mock data for demonstration purposes.
  */
 export const searchEtsyGifts = async (searchParams: {
   keywords: string;
   minPrice?: number;
   maxPrice?: number;
 }): Promise<GiftResult[]> => {
-  try {
-    // Build the query string
-    const queryParams = new URLSearchParams({
-      api_key: ETSY_API_KEY,
-      keywords: searchParams.keywords,
-    });
-    
-    if (searchParams.minPrice) {
-      queryParams.append("min_price", searchParams.minPrice.toString());
-    }
-    
-    if (searchParams.maxPrice) {
-      queryParams.append("max_price", searchParams.maxPrice.toString());
-    }
-    
-    // Fetch data from Etsy
-    const response = await fetch(`${ETSY_API_BASE_URL}/listings/active?${queryParams}`);
-    
-    if (!response.ok) {
-      throw new Error(`Etsy API error: ${response.status}`);
-    }
-    
-    const data: EtsyListingResponse = await response.json();
-    
-    // Transform Etsy listings to GiftResult objects
-    // Generate a random match score between 75-100 for each gift
-    return data.results.map(listing => {
-      const matchScore = Math.floor(Math.random() * 25) + 75; // 75-100
-      return mapEtsyListingToGiftResult(listing, matchScore);
-    });
-    
-  } catch (error) {
-    console.error("Error fetching from Etsy API:", error);
-    // For now, return mock data if API fails
-    return getMockGiftResults();
-  }
+  console.log("Searching Etsy with parameters:", searchParams);
+  
+  // In a production environment, you would:
+  // 1. Set up a proxy server to handle the Etsy API requests
+  // 2. OR use a serverless function (e.g., Supabase Edge Functions)
+  // 3. OR implement OAuth 2.0 authentication flow with Etsy
+  
+  // For now, we're skipping the actual API call due to CORS and returning mock data
+  return getMockGiftResults(searchParams.keywords);
 };
 
 /**
@@ -130,6 +106,7 @@ export const buildEtsySearchQuery = (formData: {
     formData.occasion,
     formData.interests,
     `gift for ${formData.relationship}`,
+    formData.age !== "60+" ? formData.age : "senior"
   ]
     .filter(Boolean)
     .join(" ");
@@ -138,10 +115,13 @@ export const buildEtsySearchQuery = (formData: {
 };
 
 /**
- * Mock gift results for fallback or development
+ * Generate more relevant mock gift results based on search keywords
  */
-const getMockGiftResults = (): GiftResult[] => {
-  return [
+const getMockGiftResults = (keywords: string): GiftResult[] => {
+  const lowerKeywords = keywords.toLowerCase();
+  
+  // Base set of gifts
+  const gifts = [
     {
       title: "Personalized Star Map - Night Sky Print",
       price: "$59.99",
@@ -155,7 +135,7 @@ const getMockGiftResults = (): GiftResult[] => {
       url: "https://etsy.com",
       aiRecommendation: "A thoughtful, personalized gift showing the night sky exactly as it appeared on a special date. Perfect for commemorating birthdays or anniversaries.",
       matchScore: 92,
-      isTrending: false,
+      isTrending: true,
       sales: 3200
     },
     {
@@ -174,7 +154,6 @@ const getMockGiftResults = (): GiftResult[] => {
       isTrending: false,
       sales: 800
     },
-    // Adding more mock data
     {
       title: "Handcrafted Wooden Music Box",
       price: "$89.99",
@@ -189,6 +168,140 @@ const getMockGiftResults = (): GiftResult[] => {
       matchScore: 87,
       isTrending: true,
       sales: 1200
+    },
+    {
+      title: "Personalized Name Necklace",
+      price: "$45.99",
+      images: [
+        "https://placehold.co/600x400/333/FFF?text=Necklace"
+      ],
+      rating: 4.9,
+      reviews: 1200,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A beautiful personalized necklace with the recipient's name. A timeless piece of jewelry they'll wear every day.",
+      matchScore: 88,
+      isTrending: true,
+      sales: 5000
+    },
+    {
+      title: "Leather Bound Journal",
+      price: "$39.99",
+      images: [
+        "https://placehold.co/600x400/333/FFF?text=Journal"
+      ],
+      rating: 4.6,
+      reviews: 520,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A high-quality leather journal with personalized engraving. Perfect for writers, travelers, or anyone who appreciates a thoughtful gift.",
+      matchScore: 85,
+      isTrending: false,
+      sales: 2100
+    },
+    {
+      title: "Custom Pet Portrait",
+      price: "$79.99",
+      images: [
+        "https://placehold.co/600x400/333/FFF?text=Pet+Portrait"
+      ],
+      rating: 4.9,
+      reviews: 890,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A custom portrait of the recipient's beloved pet. A heartwarming gift for any animal lover.",
+      matchScore: 94,
+      isTrending: true,
+      sales: 3400
+    },
+    {
+      title: "Engraved Whiskey Glasses Set",
+      price: "$65.99",
+      images: [
+        "https://placehold.co/600x400/333/FFF?text=Whiskey+Glasses"
+      ],
+      rating: 4.8,
+      reviews: 430,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A set of high-quality whiskey glasses with personalized engraving. Perfect for the whiskey enthusiast.",
+      matchScore: 89,
+      isTrending: false,
+      sales: 1800
+    },
+    {
+      title: "Custom Family Recipe Cutting Board",
+      price: "$49.99",
+      images: [
+        "https://placehold.co/600x400/333/FFF?text=Cutting+Board"
+      ],
+      rating: 4.7,
+      reviews: 610,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A beautiful cutting board engraved with a treasured family recipe. A meaningful gift for anyone who loves cooking.",
+      matchScore: 91,
+      isTrending: true,
+      sales: 2700
     }
   ];
+
+  // Conditionally add more gifts based on keywords
+  if (lowerKeywords.includes("birthday")) {
+    gifts.push({
+      title: "Birthday Countdown Calendar",
+      price: "$34.99",
+      images: ["https://placehold.co/600x400/333/FFF?text=Birthday+Calendar"],
+      rating: 4.8,
+      reviews: 325,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A fun countdown calendar to build excitement for their big day. Each day reveals a small gift or message.",
+      matchScore: 93,
+      isTrending: false,
+      sales: 950
+    });
+  }
+  
+  if (lowerKeywords.includes("wedding") || lowerKeywords.includes("anniversary")) {
+    gifts.push({
+      title: "Custom Wedding Vows Art Print",
+      price: "$69.99",
+      images: ["https://placehold.co/600x400/333/FFF?text=Vows+Print"],
+      rating: 5.0,
+      reviews: 189,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "Turn wedding vows or a special quote into a beautiful art piece. A romantic reminder of their special day.",
+      matchScore: 96,
+      isTrending: true,
+      sales: 780
+    });
+  }
+
+  if (lowerKeywords.includes("child") || lowerKeywords.includes("under 18")) {
+    gifts.push({
+      title: "Personalized Children's Storybook",
+      price: "$39.99",
+      images: ["https://placehold.co/600x400/333/FFF?text=Storybook"],
+      rating: 4.9,
+      reviews: 752,
+      retailer: "Etsy",
+      url: "https://etsy.com",
+      aiRecommendation: "A custom storybook where the child becomes the main character. A magical gift they'll love reading over and over.",
+      matchScore: 98,
+      isTrending: true,
+      sales: 4200
+    });
+  }
+
+  // Shuffle and return a random selection to simulate different results each time
+  return gifts
+    .sort(() => 0.5 - Math.random())
+    .map(gift => {
+      // Randomize match scores slightly
+      const adjustedScore = Math.min(99, Math.max(75, gift.matchScore + Math.floor(Math.random() * 10) - 5));
+      return {...gift, matchScore: adjustedScore};
+    });
 };
+
