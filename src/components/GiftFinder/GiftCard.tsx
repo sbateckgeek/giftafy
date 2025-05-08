@@ -10,11 +10,18 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { toast } from 'sonner';
 import { useInView } from 'react-intersection-observer';
 
-interface GiftCardProps {
-  gift: GiftResult;
+interface ActionIcon {
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
 }
 
-export const GiftCard = ({ gift }: GiftCardProps) => {
+export interface GiftCardProps {
+  gift: GiftResult;
+  actionIcons?: ActionIcon[];
+}
+
+export const GiftCard: React.FC<GiftCardProps> = ({ gift, actionIcons }) => {
   const [saved, setSaved] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const { ref, inView } = useInView({
@@ -162,34 +169,54 @@ export const GiftCard = ({ gift }: GiftCardProps) => {
           </Button>
           
           <div className="flex justify-between w-full">
-            <Button 
-              variant="outline" 
-              size="icon"
-              className="border-white/20 text-white/70 hover:bg-white/5 hover:text-primary"
-              onClick={toggleSave}
-            >
-              {saved ? <BookmarkCheck className="h-4 w-4 fill-primary text-primary" /> : <Bookmark className="h-4 w-4" />}
-            </Button>
-            
-            <Popover>
-              <PopoverTrigger asChild>
+            {/* Use provided actionIcons if available, otherwise use default actions */}
+            {actionIcons ? (
+              <>
+                {actionIcons.map((action, index) => (
+                  <Button 
+                    key={index}
+                    variant="outline" 
+                    size="icon"
+                    className="border-white/20 text-white/70 hover:bg-white/5 hover:text-primary"
+                    onClick={action.onClick}
+                    title={action.label}
+                  >
+                    {action.icon}
+                  </Button>
+                ))}
+              </>
+            ) : (
+              <>
                 <Button 
                   variant="outline" 
                   size="icon"
                   className="border-white/20 text-white/70 hover:bg-white/5 hover:text-primary"
+                  onClick={toggleSave}
                 >
-                  <Share className="h-4 w-4" />
+                  {saved ? <BookmarkCheck className="h-4 w-4 fill-primary text-primary" /> : <Bookmark className="h-4 w-4" />}
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-2 bg-background/95 backdrop-blur-lg border-white/10">
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => shareGift('facebook')}>Facebook</Button>
-                  <Button size="sm" variant="outline" onClick={() => shareGift('twitter')}>Twitter</Button>
-                  <Button size="sm" variant="outline" onClick={() => shareGift('email')}>Email</Button>
-                  <Button size="sm" variant="outline" onClick={() => shareGift('link')}>Copy Link</Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      className="border-white/20 text-white/70 hover:bg-white/5 hover:text-primary"
+                    >
+                      <Share className="h-4 w-4" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-2 bg-background/95 backdrop-blur-lg border-white/10">
+                    <div className="flex gap-2">
+                      <Button size="sm" variant="outline" onClick={() => shareGift('facebook')}>Facebook</Button>
+                      <Button size="sm" variant="outline" onClick={() => shareGift('twitter')}>Twitter</Button>
+                      <Button size="sm" variant="outline" onClick={() => shareGift('email')}>Email</Button>
+                      <Button size="sm" variant="outline" onClick={() => shareGift('link')}>Copy Link</Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </>
+            )}
           </div>
         </CardFooter>
       </div>
