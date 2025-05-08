@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { GiftResult, GiftFinderFormData } from '@/types/giftFinder';
-import GiftCard from './GiftCard';
+import { GiftCard } from './GiftCard';
 import { Heart, Share2, Bookmark, ArrowUpCircle } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";

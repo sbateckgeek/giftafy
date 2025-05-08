@@ -9,7 +9,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { PricingTierProps } from '@/components/PricingSection';
+
+// Remove the incorrect import
+// import { PricingTierProps } from '@/components/PricingSection';
 
 const GiftFinderPage = () => {
   const [user, setUser] = useState<any>(null);
