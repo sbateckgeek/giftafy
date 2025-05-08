@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
 // Remove the incorrect import
-// import { PricingTierProps } from '@/components/PricingSection';
+// No PricingTierProps import needed
 
 const GiftFinderPage = () => {
   const [user, setUser] = useState<any>(null);

@@ -44,27 +44,28 @@ serve(async (req) => {
 
   try {
     // Parse the request body
-    const { searchTerms, minPrice, maxPrice, apiKey } = await req.json();
+    const { searchTerms, minPrice, maxPrice } = await req.json();
     
-    // Validate user's session and subscription tier
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'No authorization header' }), { 
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
-    }
+    // Create a Supabase client with the Auth context of the requesting user
+    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
     
+    // Create client with the Authorization header from the request
     const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
+      supabaseUrl,
+      supabaseAnonKey,
+      { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } }
     );
     
-    // Get user's session
+    // Get user info from the request
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    
     if (userError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
+      console.error('Authentication error:', userError);
+      return new Response(JSON.stringify({ 
+        error: 'Unauthorized', 
+        details: userError?.message || 'User not authenticated'
+      }), { 
         status: 401,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -78,7 +79,11 @@ serve(async (req) => {
       .single();
       
     if (userDataError) {
-      return new Response(JSON.stringify({ error: 'Failed to fetch user data' }), { 
+      console.error('Error fetching user data:', userDataError);
+      return new Response(JSON.stringify({ 
+        error: 'Failed to fetch user data',
+        details: userDataError.message
+      }), { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -92,7 +97,11 @@ serve(async (req) => {
       .single();
       
     if (limitsError) {
-      return new Response(JSON.stringify({ error: 'Failed to fetch subscription limits' }), { 
+      console.error('Error fetching subscription limits:', limitsError);
+      return new Response(JSON.stringify({ 
+        error: 'Failed to fetch subscription limits',
+        details: limitsError.message
+      }), { 
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -112,7 +121,10 @@ serve(async (req) => {
     }
     
     if (searchCount >= subscriptionLimits.daily_searches) {
-      return new Response(JSON.stringify({ error: 'Daily search limit exceeded', limitExceeded: true }), { 
+      return new Response(JSON.stringify({ 
+        error: 'Daily search limit exceeded', 
+        limitExceeded: true 
+      }), { 
         status: 429,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -137,6 +149,8 @@ serve(async (req) => {
 
     // Build the Google Custom Search API URL
     let searchQuery = searchTerms + " gift ideas";
+    console.log("Searching for:", searchQuery);
+    
     let url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${SEARCH_ENGINE_ID}&q=${encodeURIComponent(searchQuery)}`;
     
     // Add price range as a filter if provided
@@ -144,12 +158,22 @@ serve(async (req) => {
       url += `&exactTerms=price`;
     }
     
+    console.log("Making API request to Google:", url);
+    
     // Make request to Google Custom Search API
     const response = await fetch(url);
     const data = await response.json();
     
+    // Log API response for debugging
+    console.log("Google API response status:", response.status);
+    console.log("Google API response headers:", Object.fromEntries(response.headers));
+    
     if (!data.items || data.items.length === 0) {
-      return new Response(JSON.stringify({ error: 'No results found' }), { 
+      console.error("No search results found:", data);
+      return new Response(JSON.stringify({ 
+        error: 'No results found',
+        googleResponse: data
+      }), { 
         status: 404,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -175,7 +199,7 @@ serve(async (req) => {
           title: item.title,
           images: item.pagemap?.cse_image?.map(img => img.src) || 
                  item.pagemap?.cse_thumbnail?.map(img => img.src) || 
-                 [],
+                 ["https://placehold.co/600x400/333/FFF?text=Gift+Image"],
           price: price ? `$${price.toFixed(2)}` : 'Price not available',
           rating: parseFloat(randomRating),
           reviews: Math.floor(randomSales / 4),
@@ -189,6 +213,8 @@ serve(async (req) => {
       })
       .filter(Boolean); // Remove null entries (items outside price range)
     
+    console.log(`Returning ${gifts.length} gift results`);
+    
     // Return the gift recommendations
     return new Response(JSON.stringify({ gifts }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
@@ -197,7 +223,10 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error processing request:', error);
     
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    return new Response(JSON.stringify({ 
+      error: 'Internal server error',
+      details: error.message
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { GiftFinderFormData, FormStep, GiftResult } from '@/types/giftFinder';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { searchEtsyGifts, buildEtsySearchQuery } from '@/services/etsyApiService';
 
 // Initial form data
 const initialFormData: GiftFinderFormData = {
@@ -89,38 +90,71 @@ export const useGiftFinder = () => {
     setLimitExceeded(false);
     
     try {
-      // Build search query from form data
-      const searchQuery = `${formData.relationship} ${formData.age} ${formData.occasion} ${formData.interests}`;
-      const budgetRange = parseBudgetRange(formData.budget);
+      // Use the mock data from the Etsy service for now as backup if edge function fails
+      let gifts: GiftResult[] = [];
+      let edgeFunctionFailed = false;
       
-      // Call the Supabase Edge Function
-      const { data, error } = await supabase.functions.invoke('search-gifts', {
-        body: {
-          searchTerms: searchQuery,
-          minPrice: budgetRange.min,
-          maxPrice: budgetRange.max
+      try {
+        // Build search query from form data
+        const searchQuery = `${formData.relationship} ${formData.age} ${formData.occasion} ${formData.interests}`;
+        const budgetRange = parseBudgetRange(formData.budget);
+        
+        // Try to call the Supabase Edge Function first
+        const { data, error } = await supabase.functions.invoke('search-gifts', {
+          body: {
+            searchTerms: searchQuery,
+            minPrice: budgetRange.min,
+            maxPrice: budgetRange.max
+          }
+        });
+        
+        if (error) {
+          if (error.message?.includes('limitExceeded')) {
+            setLimitExceeded(true);
+            toast.error('Daily search limit exceeded', {
+              description: 'Please upgrade your subscription for more searches.'
+            });
+            return;
+          }
+          
+          console.error("Edge Function Error:", error);
+          edgeFunctionFailed = true;
+          throw error;
         }
-      });
-      
-      if (error) {
-        if (error.message?.includes('limitExceeded')) {
-          setLimitExceeded(true);
-          toast.error('Daily search limit exceeded', {
-            description: 'Please upgrade your subscription for more searches.'
+        
+        if (data && data.gifts && data.gifts.length > 0) {
+          gifts = data.gifts;
+        } else {
+          edgeFunctionFailed = true;
+          throw new Error("No gift results returned from edge function");
+        }
+      } catch (edgeFunctionError) {
+        console.log("Edge function error, falling back to local mock data", edgeFunctionError);
+        edgeFunctionFailed = true;
+        
+        // Fall back to the etsy service mock data if the edge function fails
+        const searchQuery = buildEtsySearchQuery(formData);
+        gifts = await searchEtsyGifts({ 
+          keywords: searchQuery,
+          minPrice: parseBudgetRange(formData.budget).min,
+          maxPrice: parseBudgetRange(formData.budget).max
+        });
+        
+        if (edgeFunctionFailed) {
+          toast.warning('Using offline gift data', { 
+            description: 'Online search is currently unavailable.'
           });
-          return;
         }
-        throw error;
       }
       
-      if (!data || !data.gifts || data.gifts.length === 0) {
+      if (!gifts || gifts.length === 0) {
         toast.error('No gift ideas found', {
           description: 'Please try different search criteria.'
         });
         return;
       }
       
-      setGiftResults(data.gifts);
+      setGiftResults(gifts);
       setIsResultsView(true);
       // Scroll to top when results are shown
       window.scrollTo({ top: 0, behavior: 'smooth' });
