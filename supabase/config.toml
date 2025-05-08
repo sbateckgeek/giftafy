@@ -1,1 +1,8 @@
+
 project_id = "hgrftxifqwppaniradyn"
+
+[functions.search-gifts]
+verify_jwt = true
+
+[functions.save-gift]
+verify_jwt = true

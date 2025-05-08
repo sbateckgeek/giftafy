@@ -9,7 +9,163 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      saved_gifts: {
+        Row: {
+          ai_insight: string | null
+          buy_link: string
+          created_at: string
+          gift_image: string | null
+          gift_name: string
+          id: string
+          is_favorite: boolean
+          price: string | null
+          rating: number | null
+          sales: number | null
+          user_id: string
+        }
+        Insert: {
+          ai_insight?: string | null
+          buy_link: string
+          created_at?: string
+          gift_image?: string | null
+          gift_name: string
+          id?: string
+          is_favorite?: boolean
+          price?: string | null
+          rating?: number | null
+          sales?: number | null
+          user_id: string
+        }
+        Update: {
+          ai_insight?: string | null
+          buy_link?: string
+          created_at?: string
+          gift_image?: string | null
+          gift_name?: string
+          id?: string
+          is_favorite?: boolean
+          price?: string | null
+          rating?: number | null
+          sales?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_gifts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      search_history: {
+        Row: {
+          age: string | null
+          budget: string | null
+          created_at: string
+          id: string
+          interests: string | null
+          occasion: string | null
+          relationship: string | null
+          search_terms: string
+          user_id: string
+        }
+        Insert: {
+          age?: string | null
+          budget?: string | null
+          created_at?: string
+          id?: string
+          interests?: string | null
+          occasion?: string | null
+          relationship?: string | null
+          search_terms: string
+          user_id: string
+        }
+        Update: {
+          age?: string | null
+          budget?: string | null
+          created_at?: string
+          id?: string
+          interests?: string | null
+          occasion?: string | null
+          relationship?: string | null
+          search_terms?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "search_history_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_limits: {
+        Row: {
+          can_favorite_gifts: boolean
+          can_save_gifts: boolean
+          daily_searches: number
+          description: string | null
+          monthly_searches: number
+          tier: string
+        }
+        Insert: {
+          can_favorite_gifts?: boolean
+          can_save_gifts?: boolean
+          daily_searches: number
+          description?: string | null
+          monthly_searches: number
+          tier: string
+        }
+        Update: {
+          can_favorite_gifts?: boolean
+          can_save_gifts?: boolean
+          daily_searches?: number
+          description?: string | null
+          monthly_searches?: number
+          tier?: string
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string | null
+          id: string
+          last_name: string | null
+          last_search_reset: string
+          search_count: number
+          subscription_tier: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name?: string | null
+          id: string
+          last_name?: string | null
+          last_search_reset?: string
+          search_count?: number
+          subscription_tier?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string | null
+          id?: string
+          last_name?: string | null
+          last_search_reset?: string
+          search_count?: number
+          subscription_tier?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

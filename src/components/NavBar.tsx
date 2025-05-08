@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { cn } from '@/lib/utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 type NavLinkProps = {
   href: string;
@@ -33,6 +35,8 @@ const NavLink = ({ href, children, onClick, isExternal = false }: NavLinkProps) 
 const NavBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,8 +44,38 @@ const NavBar = () => {
     };
 
     window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    
+    // Check if user is logged in
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
+    
+    getUser();
+    
+    // Listen for auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+    
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      authListener.subscription.unsubscribe();
+    };
   }, []);
+  
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate('/');
+      toast.success('Logged out successfully');
+    } catch (error) {
+      console.error('Error logging out:', error);
+      toast.error('Error logging out');
+    }
+  };
 
   const navLinks = [
     { name: "Home", href: "/", isExternal: false },
@@ -51,6 +85,11 @@ const NavBar = () => {
     { name: "Pricing", href: "/#pricing", isExternal: true },
     { name: "FAQ", href: "/#faq", isExternal: true }
   ];
+  
+  // Add Dashboard link if user is logged in
+  if (user) {
+    navLinks.push({ name: "Dashboard", href: "/dashboard", isExternal: false });
+  }
 
   const closeMobileMenu = () => setMobileMenuOpen(false);
 
@@ -77,11 +116,30 @@ const NavBar = () => {
               {link.name}
             </NavLink>
           ))}
-          <Link to="/gift-finder">
-            <Button className="neomorphic-button ml-4">
-              Get Started
-            </Button>
-          </Link>
+          
+          {user ? (
+            <div className="flex items-center space-x-2 ml-4">
+              <Button 
+                className="neomorphic-button"
+                onClick={() => navigate('/dashboard')}
+              >
+                <User size={16} className="mr-2" />
+                Account
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
+          ) : (
+            <Link to="/auth">
+              <Button className="neomorphic-button ml-4">
+                Get Started
+              </Button>
+            </Link>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -116,11 +174,33 @@ const NavBar = () => {
               {link.name}
             </NavLink>
           ))}
-          <Link to="/gift-finder" onClick={closeMobileMenu}>
-            <Button className="neomorphic-button mt-4 w-full">
-              Get Started
-            </Button>
-          </Link>
+          
+          {user ? (
+            <>
+              <Link to="/dashboard" onClick={closeMobileMenu}>
+                <Button className="neomorphic-button mt-4 w-full">
+                  <User size={16} className="mr-2" />
+                  Account
+                </Button>
+              </Link>
+              <Button 
+                variant="outline"
+                className="w-full" 
+                onClick={() => {
+                  handleLogout();
+                  closeMobileMenu();
+                }}
+              >
+                Logout
+              </Button>
+            </>
+          ) : (
+            <Link to="/auth" onClick={closeMobileMenu}>
+              <Button className="neomorphic-button mt-4 w-full">
+                Get Started
+              </Button>
+            </Link>
+          )}
         </div>
       </div>
     </nav>
