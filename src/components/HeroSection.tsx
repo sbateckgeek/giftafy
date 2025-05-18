@@ -47,10 +47,10 @@ const HeroSection = () => {
           )}>
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-60"></div>
             
-            {/* Update the mockup image to use the uploaded one from the images */}
+            {/* Update the mockup image to use the newly uploaded image */}
             <img 
-              src="/lovable-uploads/350e9fca-456b-4354-a538-ba61e696b9f7.png" 
-              alt="Giftafy Interface Mockup" 
+              src="/lovable-uploads/5d9e05cb-f310-4a0d-bae7-ab2af999ebc0.png" 
+              alt="Giftafy Gift Finder Interface" 
               className="w-full h-auto rounded-lg relative z-10" 
             />
             
