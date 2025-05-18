@@ -46,8 +46,10 @@ const HeroSection = () => {
             "rounded-xl shadow-glow-md overflow-hidden"
           )}>
             <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 to-transparent opacity-60"></div>
+            
+            {/* Update the mockup image to use the uploaded one from the images */}
             <img 
-              src="/lovable-uploads/c2fa0368-2ce0-4419-83f7-26e21eda3314.png" 
+              src="/lovable-uploads/350e9fca-456b-4354-a538-ba61e696b9f7.png" 
               alt="Giftafy Interface Mockup" 
               className="w-full h-auto rounded-lg relative z-10" 
             />

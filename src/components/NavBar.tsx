@@ -23,6 +23,11 @@ import {
   BreadcrumbList,
   BreadcrumbSeparator
 } from "@/components/ui/breadcrumb";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type NavLinkProps = {
   href: string;
@@ -65,7 +70,6 @@ const NavLink = ({ href, children, onClick, isExternal = false, className, isAct
 const NavBar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [secondaryMenuOpen, setSecondaryMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
@@ -299,16 +303,18 @@ const NavBar = () => {
                     </NavigationMenuItem>
                   ))}
                   
-                  {/* Secondary Navigation dropdown */}
+                  {/* Fix: Replace NavigationMenu with Popover for "More" dropdown to fix positioning issue */}
                   <NavigationMenuItem>
-                    <NavigationMenuTrigger className="px-3 py-2 text-white/80 hover:text-primary data-[state=open]:text-primary bg-transparent hover:bg-white/5 data-[state=open]:bg-white/5">
-                      More
-                    </NavigationMenuTrigger>
-                    <NavigationMenuContent className="bg-background/95 backdrop-blur-lg border border-white/10 rounded-md p-1 shadow-glow-sm">
-                      <ul className="grid w-[220px] gap-1 p-2">
-                        {secondaryNavLinks.map((link) => (
-                          <li key={link.name}>
-                            <NavigationMenuLink asChild>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className="px-3 py-2 text-white/80 hover:text-primary bg-transparent hover:bg-white/5 rounded-md flex items-center gap-1">
+                          More <ChevronDown size={16} />
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="bg-background/95 backdrop-blur-lg border border-white/10 rounded-md p-1 shadow-glow-sm w-[220px] z-50">
+                        <ul className="grid gap-1 p-2">
+                          {secondaryNavLinks.map((link) => (
+                            <li key={link.name}>
                               <NavLink 
                                 href={link.href} 
                                 isExternal={link.isExternal}
@@ -317,11 +323,11 @@ const NavBar = () => {
                               >
                                 {link.name}
                               </NavLink>
-                            </NavigationMenuLink>
-                          </li>
-                        ))}
-                      </ul>
-                    </NavigationMenuContent>
+                            </li>
+                          ))}
+                        </ul>
+                      </PopoverContent>
+                    </Popover>
                   </NavigationMenuItem>
                 </NavigationMenuList>
               </NavigationMenu>

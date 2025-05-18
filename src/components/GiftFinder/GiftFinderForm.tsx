@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -229,7 +228,7 @@ const GiftFinderForm = ({
     }
   };
 
-  // Progress steps
+  // Update progress steps to only 3 steps
   const steps = ["Recipient", "Occasion", "Budget"];
   const progressPercentage = ((currentStep + 1) / steps.length) * 100;
 

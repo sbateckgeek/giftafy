@@ -5,3 +5,18 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+/* Add styles to make sure popover menus appear correctly */
+.popover-content {
+  z-index: 50;
+}
+
+/* Ensure proper layering in the navigation */
+.sticky-nav {
+  z-index: 40;
+}
+
+/* Fix for the "Powered by Etsy" to not show duplicates */
+section:has(.powered-by-etsy) + section .powered-by-etsy {
+  display: none;
+}

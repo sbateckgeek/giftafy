@@ -36,11 +36,11 @@ const GiftFinder = () => {
             Answer a few questions about the recipient and occasion, and our AI will recommend personalized gift ideas that are sure to impress.
           </p>
           
-          {/* Progress indicator for multi-step form */}
+          {/* Progress indicator for multi-step form - Fixed to show 3 steps instead of 4 */}
           {!isResultsView && (
             <div className="flex justify-center items-center mb-8">
               <div className="flex space-x-2">
-                {[1, 2, 3, 4].map((step) => (
+                {[1, 2, 3].map((step) => (
                   <div
                     key={step}
                     className={cn(
@@ -51,7 +51,7 @@ const GiftFinder = () => {
                   />
                 ))}
               </div>
-              <span className="ml-3 text-sm text-white/60">Step {currentStep} of 4</span>
+              <span className="ml-3 text-sm text-white/60">Step {currentStep} of 3</span>
             </div>
           )}
         </div>
