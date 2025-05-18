@@ -4,6 +4,7 @@ import GiftFinderForm from './GiftFinderForm';
 import GiftFinderResults from './GiftFinderResults';
 import { useGiftFinder } from '@/hooks/useGiftFinder';
 import { Sparkles } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const GiftFinder = () => {
   const { 
