@@ -32,7 +32,8 @@ export default {
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
+					foreground: 'hsl(var(--secondary-foreground))',
+					glow: '#8A51FF'
 				},
 				destructive: {
 					DEFAULT: 'hsl(var(--destructive))',
@@ -94,6 +95,10 @@ export default {
 				'slide-out-right': {
 					'0%': { transform: 'translateX(0)' },
 					'100%': { transform: 'translateX(100%)' }
+				},
+				'pulse-glow': {
+					'0%, 100%': { opacity: '0.6' },
+					'50%': { opacity: '1' }
 				}
 			},
 			animation: {
@@ -102,11 +107,31 @@ export default {
 				'fade-in-up': 'fade-in-up 0.6s ease-out',
 				'fade-in': 'fade-in 0.6s ease-out',
 				'slide-in-right': 'slide-in-right 0.3s ease-out',
-				'slide-out-right': 'slide-out-right 0.3s ease-out'
+				'slide-out-right': 'slide-out-right 0.3s ease-out',
+				'pulse-glow': 'pulse-glow 3s ease-in-out infinite'
 			},
 			fontFamily: {
 				inter: ['Inter', 'sans-serif'],
 			},
+			spacing: {
+				// 8px grid system
+				'2': '0.5rem',    // 8px
+				'4': '1rem',      // 16px
+				'6': '1.5rem',    // 24px
+				'8': '2rem',      // 32px
+				'12': '3rem',     // 48px
+				'16': '4rem',     // 64px
+				'24': '6rem',     // 96px
+				'32': '8rem',     // 128px
+			},
+			boxShadow: {
+				'glow-sm': '0 2px 10px rgba(13, 255, 139, 0.2)',
+				'glow-md': '0 4px 20px rgba(13, 255, 139, 0.3)',
+				'glow-lg': '0 8px 30px rgba(13, 255, 139, 0.4)',
+				'secondary-glow-sm': '0 2px 10px rgba(138, 81, 255, 0.2)',
+				'secondary-glow-md': '0 4px 20px rgba(138, 81, 255, 0.3)',
+				'secondary-glow-lg': '0 8px 30px rgba(138, 81, 255, 0.4)',
+			}
 		}
 	},
 	plugins: [require("tailwindcss-animate")],
