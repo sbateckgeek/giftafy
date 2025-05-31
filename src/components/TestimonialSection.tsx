@@ -98,13 +98,13 @@ const TestimonialSection = () => {
           </p>
         </div>
 
-        <div className="relative testimonials-carousel">
+        <div className="relative max-w-6xl mx-auto">
           <Carousel
             opts={{
               align: "start",
               loop: true,
             }}
-            className="w-full max-w-6xl mx-auto"
+            className="w-full"
           >
             <CarouselContent className="-ml-2 md:-ml-4">
               {testimonials.map((testimonial, index) => (
@@ -114,11 +114,8 @@ const TestimonialSection = () => {
               ))}
             </CarouselContent>
             
-            {/* Fixed carousel navigation positioning */}
-            <div className="carousel-navigation">
-              <CarouselPrevious className="relative neomorphic-button border-0 shadow-none hover:bg-white/10 translate-x-0 translate-y-0" />
-              <CarouselNext className="relative neomorphic-button border-0 shadow-none hover:bg-white/10 translate-x-0 translate-y-0" />
-            </div>
+            <CarouselPrevious className="absolute -left-12 top-1/2 -translate-y-1/2 bg-white/10 border-white/20 hover:bg-white/20 text-white" />
+            <CarouselNext className="absolute -right-12 top-1/2 -translate-y-1/2 bg-white/10 border-white/20 hover:bg-white/20 text-white" />
           </Carousel>
         </div>
       </div>

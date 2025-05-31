@@ -25,21 +25,12 @@ body {
   margin-top: 0;
 }
 
-/* Fix for the "Powered by Etsy" to not show duplicates */
-section:has(.powered-by-etsy) + section .powered-by-etsy {
+/* Hide duplicate "Powered by Etsy" labels */
+.powered-by-etsy + .powered-by-etsy {
   display: none;
 }
 
-/* Fix testimonials carousel navigation positioning */
-.testimonials-carousel .carousel-nav {
-  position: relative;
-  margin-top: 2rem;
-}
-
-/* Ensure carousel buttons are properly spaced */
-.carousel-navigation {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 2rem;
+/* Ensure only one "Powered by Etsy" shows per page */
+.powered-by-etsy:not(:first-of-type) {
+  display: none;
 }
