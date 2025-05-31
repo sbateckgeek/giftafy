@@ -98,25 +98,29 @@ const TestimonialSection = () => {
           </p>
         </div>
 
-        <Carousel
-          opts={{
-            align: "start",
-            loop: true,
-          }}
-          className="w-full"
-        >
-          <CarouselContent className="-ml-2 md:-ml-4">
-            {testimonials.map((testimonial, index) => (
-              <CarouselItem key={index} className="pl-2 md:pl-4 sm:basis-1/1 md:basis-1/2 lg:basis-1/3">
-                <TestimonialCard testimonial={testimonial} />
-              </CarouselItem>
-            ))}
-          </CarouselContent>
-          <div className="flex justify-center mt-8 gap-4">
-            <CarouselPrevious className="static neomorphic-button border-0 shadow-none hover:bg-white/10" />
-            <CarouselNext className="static neomorphic-button border-0 shadow-none hover:bg-white/10" />
-          </div>
-        </Carousel>
+        <div className="relative testimonials-carousel">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full max-w-6xl mx-auto"
+          >
+            <CarouselContent className="-ml-2 md:-ml-4">
+              {testimonials.map((testimonial, index) => (
+                <CarouselItem key={index} className="pl-2 md:pl-4 sm:basis-1/1 md:basis-1/2 lg:basis-1/3">
+                  <TestimonialCard testimonial={testimonial} />
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            
+            {/* Fixed carousel navigation positioning */}
+            <div className="carousel-navigation">
+              <CarouselPrevious className="relative neomorphic-button border-0 shadow-none hover:bg-white/10 translate-x-0 translate-y-0" />
+              <CarouselNext className="relative neomorphic-button border-0 shadow-none hover:bg-white/10 translate-x-0 translate-y-0" />
+            </div>
+          </Carousel>
+        </div>
       </div>
     </section>
   );

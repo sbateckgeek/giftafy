@@ -148,36 +148,38 @@ const NavBar = () => {
     if (pathSegments.length === 0) return null;
     
     return (
-      <div className="container mx-auto px-4 py-2">
-        <Breadcrumb>
-          <BreadcrumbList>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
-            </BreadcrumbItem>
-            <BreadcrumbSeparator />
-            {pathSegments.map((segment, index) => {
-              const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
-              const isLast = index === pathSegments.length - 1;
-              
-              return (
-                <React.Fragment key={path}>
-                  <BreadcrumbItem>
-                    {isLast ? (
-                      <span className="text-primary">
-                        {segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')}
-                      </span>
-                    ) : (
-                      <BreadcrumbLink href={path}>
-                        {segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')}
-                      </BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                  {!isLast && <BreadcrumbSeparator />}
-                </React.Fragment>
-              );
-            })}
-          </BreadcrumbList>
-        </Breadcrumb>
+      <div className="breadcrumb-container">
+        <div className="container mx-auto px-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/" className="text-white/70 hover:text-white">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="text-white/40" />
+              {pathSegments.map((segment, index) => {
+                const path = `/${pathSegments.slice(0, index + 1).join('/')}`;
+                const isLast = index === pathSegments.length - 1;
+                
+                return (
+                  <React.Fragment key={path}>
+                    <BreadcrumbItem>
+                      {isLast ? (
+                        <span className="text-primary font-medium">
+                          {segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')}
+                        </span>
+                      ) : (
+                        <BreadcrumbLink href={path} className="text-white/70 hover:text-white">
+                          {segment.charAt(0).toUpperCase() + segment.slice(1).replace(/-/g, ' ')}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                    {!isLast && <BreadcrumbSeparator className="text-white/40" />}
+                  </React.Fragment>
+                );
+              })}
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
       </div>
     );
   };
@@ -368,7 +370,7 @@ const NavBar = () => {
         </div>
       </nav>
       
-      {/* Breadcrumb Navigation */}
+      {/* Fixed Breadcrumb Navigation positioning */}
       {!isMobile && renderBreadcrumb()}
     </>
   );

@@ -16,7 +16,30 @@ body {
   z-index: 40;
 }
 
+/* Fix breadcrumb positioning */
+.breadcrumb-container {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.75rem 0;
+  margin-top: 0;
+}
+
 /* Fix for the "Powered by Etsy" to not show duplicates */
 section:has(.powered-by-etsy) + section .powered-by-etsy {
   display: none;
+}
+
+/* Fix testimonials carousel navigation positioning */
+.testimonials-carousel .carousel-nav {
+  position: relative;
+  margin-top: 2rem;
+}
+
+/* Ensure carousel buttons are properly spaced */
+.carousel-navigation {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
 }

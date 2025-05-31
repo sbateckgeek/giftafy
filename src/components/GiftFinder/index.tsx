@@ -36,7 +36,7 @@ const GiftFinder = () => {
             Answer a few questions about the recipient and occasion, and our AI will recommend personalized gift ideas that are sure to impress.
           </p>
           
-          {/* Progress indicator for multi-step form - Fixed to show 3 steps instead of 4 */}
+          {/* Fixed progress indicator to show exactly 3 steps */}
           {!isResultsView && (
             <div className="flex justify-center items-center mb-8">
               <div className="flex space-x-2">
@@ -76,10 +76,13 @@ const GiftFinder = () => {
           />
         )}
         
-        <div className="flex items-center justify-center space-x-2 mt-8">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <span className="text-sm text-white/70 uppercase tracking-wider">Powered by Etsy</span>
-        </div>
+        {/* Single "Powered by Etsy" label - only show if not in results view to avoid duplication */}
+        {!isResultsView && (
+          <div className="flex items-center justify-center space-x-2 mt-8 powered-by-etsy">
+            <Sparkles className="h-5 w-5 text-primary" />
+            <span className="text-sm text-white/70 uppercase tracking-wider">Powered by Etsy</span>
+          </div>
+        )}
       </div>
     </div>
   );
