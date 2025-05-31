@@ -41,15 +41,44 @@ serve(async (req) => {
     // Parse the request body
     const { searchTerms, minPrice, maxPrice } = await req.json();
     
-    // Create a Supabase client with the Auth context of the requesting user
+    // Create a Supabase client with proper auth handling
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('Missing Supabase configuration');
+      return new Response(JSON.stringify({ 
+        error: 'Server configuration error'
+      }), { 
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+    
+    // Get the authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('No authorization header found');
+      return new Response(JSON.stringify({ 
+        error: 'Unauthorized', 
+        details: 'No authorization token provided'
+      }), { 
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
     
     // Create client with the Authorization header from the request
     const supabaseClient = createClient(
       supabaseUrl,
       supabaseAnonKey,
-      { global: { headers: { Authorization: req.headers.get('Authorization') || '' } } }
+      { 
+        global: { 
+          headers: { 
+            Authorization: authHeader 
+          } 
+        } 
+      }
     );
     
     // Get user info from the request
@@ -66,6 +95,8 @@ serve(async (req) => {
       });
     }
     
+    console.log('User authenticated:', user.id);
+    
     // Get user's subscription tier to check limits
     const { data: userData, error: userDataError } = await supabaseClient
       .from('users')
@@ -75,13 +106,45 @@ serve(async (req) => {
       
     if (userDataError) {
       console.error('Error fetching user data:', userDataError);
-      return new Response(JSON.stringify({ 
-        error: 'Failed to fetch user data',
-        details: userDataError.message
-      }), { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      
+      // If user doesn't exist in users table, create them
+      if (userDataError.code === 'PGRST116') {
+        const { error: insertError } = await supabaseClient
+          .from('users')
+          .insert({
+            id: user.id,
+            email: user.email || '',
+            subscription_tier: 'free',
+            search_count: 0,
+            last_search_reset: new Date().toISOString()
+          });
+          
+        if (insertError) {
+          console.error('Error creating user:', insertError);
+          return new Response(JSON.stringify({ 
+            error: 'Failed to create user data',
+            details: insertError.message
+          }), { 
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        
+        // Set default user data for new user
+        userData = {
+          subscription_tier: 'free',
+          search_count: 0,
+          last_search_reset: new Date().toISOString()
+        };
+      } else {
+        return new Response(JSON.stringify({ 
+          error: 'Failed to fetch user data',
+          details: userDataError.message
+        }), { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
     }
     
     // Get subscription limits
@@ -93,13 +156,8 @@ serve(async (req) => {
       
     if (limitsError) {
       console.error('Error fetching subscription limits:', limitsError);
-      return new Response(JSON.stringify({ 
-        error: 'Failed to fetch subscription limits',
-        details: limitsError.message
-      }), { 
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      });
+      // Default to free tier limits if not found
+      subscriptionLimits = { daily_searches: 10 };
     }
     
     // Check if user has exceeded search limits

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { GiftFinderFormData, FormStep, GiftResult } from '@/types/giftFinder';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { searchEtsyGifts, buildEtsySearchQuery } from '@/services/etsyApiService';
 
 // Initial form data
 const initialFormData: GiftFinderFormData = {
@@ -90,74 +89,60 @@ export const useGiftFinder = () => {
     setLimitExceeded(false);
     
     try {
-      // Use the mock data from the Etsy service for now as backup if edge function fails
-      let gifts: GiftResult[] = [];
-      let edgeFunctionFailed = false;
+      // Build search query from form data
+      const searchQuery = `${formData.relationship} ${formData.age} ${formData.occasion} ${formData.interests}`;
+      const budgetRange = parseBudgetRange(formData.budget);
       
-      try {
-        // Build search query from form data
-        const searchQuery = `${formData.relationship} ${formData.age} ${formData.occasion} ${formData.interests}`;
-        const budgetRange = parseBudgetRange(formData.budget);
-        
-        // Try to call the Supabase Edge Function first
-        const { data, error } = await supabase.functions.invoke('search-gifts', {
-          body: {
-            searchTerms: searchQuery,
-            minPrice: budgetRange.min,
-            maxPrice: budgetRange.max
-          }
-        });
-        
-        if (error) {
-          if (error.message?.includes('limitExceeded')) {
-            setLimitExceeded(true);
-            toast.error('Daily search limit exceeded', {
-              description: 'Please upgrade your subscription for more searches.'
-            });
-            return;
-          }
-          
-          console.error("Edge Function Error:", error);
-          edgeFunctionFailed = true;
-          throw error;
+      console.log('Submitting search with:', { searchQuery, budgetRange });
+      
+      // Call the Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('search-gifts', {
+        body: {
+          searchTerms: searchQuery,
+          minPrice: budgetRange.min,
+          maxPrice: budgetRange.max
         }
+      });
+      
+      if (error) {
+        console.error("Edge Function Error:", error);
         
-        if (data && data.gifts && data.gifts.length > 0) {
-          gifts = data.gifts;
-        } else {
-          edgeFunctionFailed = true;
-          throw new Error("No gift results returned from edge function");
-        }
-      } catch (edgeFunctionError) {
-        console.log("Edge function error, falling back to local mock data", edgeFunctionError);
-        edgeFunctionFailed = true;
-        
-        // Fall back to the etsy service mock data if the edge function fails
-        const searchQuery = buildEtsySearchQuery(formData);
-        gifts = await searchEtsyGifts({ 
-          keywords: searchQuery,
-          minPrice: parseBudgetRange(formData.budget).min,
-          maxPrice: parseBudgetRange(formData.budget).max
-        });
-        
-        if (edgeFunctionFailed) {
-          toast.warning('Using offline gift data', { 
-            description: 'Online search is currently unavailable.'
+        if (error.message?.includes('limitExceeded') || error.message?.includes('Daily search limit exceeded')) {
+          setLimitExceeded(true);
+          toast.error('Daily search limit exceeded', {
+            description: 'Please upgrade your subscription for more searches.'
           });
+          return;
         }
+        
+        if (error.message?.includes('Unauthorized')) {
+          toast.error('Authentication required', {
+            description: 'Please log in to search for gifts.'
+          });
+          return;
+        }
+        
+        toast.error('Search failed', {
+          description: 'Unable to search for gifts at the moment. Please try again.'
+        });
+        return;
       }
       
-      if (!gifts || gifts.length === 0) {
+      if (!data || !data.gifts || data.gifts.length === 0) {
         toast.error('No gift ideas found', {
           description: 'Please try different search criteria.'
         });
         return;
       }
       
-      setGiftResults(gifts);
+      console.log('Received gifts:', data.gifts);
+      setGiftResults(data.gifts);
       setIsResultsView(true);
       // Scroll to top when results are shown
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      
+      toast.success(`Found ${data.gifts.length} personalized gift ideas!`);
+      
     } catch (error) {
       console.error("Error fetching gift recommendations:", error);
       toast.error("Something went wrong. Please try again.");
